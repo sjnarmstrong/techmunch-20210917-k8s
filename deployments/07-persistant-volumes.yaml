@@ -1,0 +1,59 @@
+# kubectl apply -f deployments/07-persistant-volumes.yaml
+# kubectl delete -f deployments/07-persistant-volumes.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: techmunch-headless
+  labels:
+    app: techmunch-headless
+spec:
+  clusterIP: None
+  selector:
+    app: techmunch
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: techmunch
+spec:
+  selector:
+    matchLabels:
+      app: techmunch
+  serviceName: techmunch-headless
+  replicas: 3 
+  template:
+    metadata:
+      labels:
+        app: techmunch 
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: techmunch
+          image: sjnarmstrong/techmunch-sholto:20210717
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8888
+              protocol: TCP
+              name: http
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+            limits:
+              memory: "500Mi"
+              cpu: "1000m"
+          volumeMounts:
+            - name: data
+              mountPath: "/etc/namesvol"
+
+  volumeClaimTemplates: # Create PVC
+  - metadata:
+      name: data
+    spec:
+      resources:
+        requests:
+          storage: 1Gi
+      accessModes: 
+        - ReadWriteOnce
+      # storageClassName: gp2

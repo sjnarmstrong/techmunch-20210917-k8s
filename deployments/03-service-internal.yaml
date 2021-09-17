@@ -1,0 +1,16 @@
+# kubectl apply -f deployments/03-service-internal.yaml
+# kubectl delete -f deployments/03-service-internal.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: techmunch-internal
+spec:
+  type: ClusterIP # Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default ServiceType
+  # type: NodePort
+  selector:
+    app: techmunch
+  ports:
+    - protocol: TCP
+      port: 8888
+      targetPort: 8888
+      # nodePort: 32000

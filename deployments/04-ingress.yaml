@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  labels:
+    app: techmunch
+  name: techmunch
+spec:
+  rules:
+  - host: techmunch.matrix.iotnxt.io
+    http:
+      paths:
+      - backend:
+          serviceName: techmunch
+          servicePort: http
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - techmunch.matrix.iotnxt.io
+    secretName: techmunch-cert

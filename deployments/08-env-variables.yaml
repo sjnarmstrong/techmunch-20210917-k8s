@@ -1,0 +1,48 @@
+# kubectl apply -f deployments/08-env-variables.yaml
+# kubectl delete -f deployments/08-env-variables.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: techmunch-headless
+  labels:
+    app: techmunch-headless
+spec:
+  clusterIP: None
+  selector:
+    app: techmunch
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: techmunch
+spec:
+  selector:
+    matchLabels:
+      app: techmunch
+  serviceName: techmunch-headless
+  replicas: 3 
+  template:
+    metadata:
+      labels:
+        app: techmunch 
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: techmunch
+          image: sjnarmstrong/techmunch-sholto:20210717
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8888
+              protocol: TCP
+              name: http
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+            limits:
+              memory: "500Mi"
+              cpu: "1000m"
+          env:
+            - name: APP_CONFIG
+              value: "This value is now different"

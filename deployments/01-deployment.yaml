@@ -1,0 +1,38 @@
+# You describe a desired state in a Deployment, and the Deployment Controller changes the actual state to the desired state at a controlled rate. You can define Deployments to create new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments.
+# kubectl apply -f deployments/01-deployment.yaml
+# kubectl delete -f deployments/01-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+# Metadata of deployment
+metadata:
+  name: techmunch
+  labels:
+    app: techmunch
+spec:
+  replicas: 3
+  # metadata deployment uses to manage the pods
+  selector:
+    matchLabels:
+      app: techmunch
+  template:
+    # Metadata of pods
+    metadata:
+      labels:
+        app: techmunch
+    spec:
+      containers:
+        - name: techmunch
+          image: sjnarmstrong/techmunch-sholto:20210717
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8888
+              protocol: TCP
+              name: http
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+            limits:
+              memory: "500Mi"
+              cpu: "1000m"
